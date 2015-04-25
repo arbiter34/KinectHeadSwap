@@ -1,0 +1,32 @@
+﻿Build started 4/24/2015 6:16:07 PM.
+     1>Project "c:\Users\h56t383\documents\visual studio 2010\Projects\KinectFinalProjectEVAR\KinectFinalProjectEVAR\KinectFinalProjectEVAR.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Debug\KinectFinalProjectEVAR.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         All outputs are up-to-date.
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\OpenNI2\Include\\" /IC:\opencv\opencv\build\include /I"C:\Program Files (x86)\PrimeSense\NiTE2\Include\\" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\KinectFinalProjectEVAR.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt KinectFinalProjectEVAR.cpp
+         KinectFinalProjectEVAR.cpp
+     1>c:\users\h56t383\documents\visual studio 2010\projects\kinectfinalprojectevar\kinectfinalprojectevar\kinectfinalprojectevar.cpp(46): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\h56t383\documents\visual studio 2010\projects\kinectfinalprojectevar\kinectfinalprojectevar\kinectfinalprojectevar.cpp(46): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\h56t383\documents\visual studio 2010\projects\kinectfinalprojectevar\kinectfinalprojectevar\kinectfinalprojectevar.cpp(47): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\h56t383\documents\visual studio 2010\projects\kinectfinalprojectevar\kinectfinalprojectevar\kinectfinalprojectevar.cpp(47): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+       ManifestResourceCompile:
+         All outputs are up-to-date.
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"c:\users\h56t383\documents\visual studio 2010\Projects\KinectFinalProjectEVAR\Debug\KinectFinalProjectEVAR.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\OpenNI2\Lib\\" /LIBPATH:C:\opencv\opencv\build\x86\vc10\lib /LIBPATH:"C:\Program Files (x86)\PrimeSense\NiTE2\Lib\\" OpenNI2.lib NiTE2.lib opencv_calib3d246.lib opencv_contrib246.lib opencv_core246.lib opencv_features2d246.lib opencv_flann246.lib opencv_gpu246.lib opencv_highgui246.lib opencv_imgproc246.lib opencv_legacy246.lib opencv_ml246.lib opencv_nonfree246.lib opencv_objdetect246.lib opencv_ocl246.lib opencv_photo246.lib opencv_stitching246.lib opencv_superres246.lib opencv_ts246.lib opencv_video246.lib opencv_videostab246.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\KinectFinalProjectEVAR.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"c:\users\h56t383\documents\visual studio 2010\Projects\KinectFinalProjectEVAR\Debug\KinectFinalProjectEVAR.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"c:\users\h56t383\documents\visual studio 2010\Projects\KinectFinalProjectEVAR\Debug\KinectFinalProjectEVAR.lib" /MACHINE:X86 Debug\KinectFinalProjectEVAR.exe.embed.manifest.res
+         Debug\KinectFinalProjectEVAR.obj
+         Debug\stdafx.obj
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\KinectFinalProjectEVAR.exe.embed.manifest" /manifest Debug\KinectFinalProjectEVAR.exe.intermediate.manifest
+         All outputs are up-to-date.
+       LinkEmbedManifest:
+         All outputs are up-to-date.
+         KinectFinalProjectEVAR.vcxproj -> c:\users\h56t383\documents\visual studio 2010\Projects\KinectFinalProjectEVAR\Debug\KinectFinalProjectEVAR.exe
+       FinalizeBuildStatus:
+         Deleting file "Debug\KinectFinalProjectEVAR.unsuccessfulbuild".
+         Touching "Debug\KinectFinalProjectEVAR.lastbuildstate".
+     1>Done Building Project "c:\Users\h56t383\documents\visual studio 2010\Projects\KinectFinalProjectEVAR\KinectFinalProjectEVAR\KinectFinalProjectEVAR.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.14
