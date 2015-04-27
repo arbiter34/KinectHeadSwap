@@ -11,6 +11,8 @@
 #define height 240
 
 cv::Mat frame;
+cv::Mat drawFrame;
+cv::Mat image;
 openni::VideoStream depth;
 openni::RGB888Pixel *pColor;
 
@@ -24,8 +26,8 @@ void SwapPixels(int x1, int y1, int x2, int y2) {
 		}
 		openni::RGB888Pixel pix1 = pColor[frame.cols*(y1+y)+x1];
 		openni::RGB888Pixel pix2 = pColor[frame.cols*(y2+y)+x2];
-		frame.at<cv::Vec3b>((y1+y), x1) = cv::Vec3b(pix2.b, pix2.g, pix2.r);
-		frame.at<cv::Vec3b>((y2+y), x2) = cv::Vec3b(pix1.b, pix1.g, pix1.r);
+		drawFrame.at<cv::Vec3b>((y1+y), x1) = cv::Vec3b(pix2.b, pix2.g, pix2.r);
+		drawFrame.at<cv::Vec3b>((y2+y), x2) = cv::Vec3b(pix1.b, pix1.g, pix1.r);
 	}
 }
 
@@ -35,7 +37,7 @@ void SwapHeads(nite::UserTracker* pUserTracker, const nite::Array<nite::UserData
     openni::DepthPixel* pDepth = (openni::DepthPixel *) dep.getData();
 	const nite::SkeletonJoint& joint1 = users[0].getSkeleton().getJoint(nite::JOINT_HEAD);
 	const nite::SkeletonJoint& joint2 = users[1].getSkeleton().getJoint(nite::JOINT_HEAD);
-	if (joint1.getPositionConfidence() < 0.5f || joint2.getPositionConfidence() < 0.5f) {
+	if (joint1.getPositionConfidence() < 0.3f || joint2.getPositionConfidence() < 0.3f) {
 		return;
 	}
 	float head1Coords[2];
@@ -110,7 +112,7 @@ void SwapHeads(nite::UserTracker* pUserTracker, const nite::Array<nite::UserData
 
 	for (int i = topOfHead; i < topOfHead + 6; i++) {
 		for (int j = leftOfHead; j < leftOfHead + 6; j++) {
-			frame.at<cv::Vec3b>(i, j) = cv::Vec3b(255, 255, 255);
+			drawFrame.at<cv::Vec3b>(i, j) = image.at<cv::Vec3b>(i, j);
 		}
 	}
 	
@@ -118,30 +120,30 @@ void SwapHeads(nite::UserTracker* pUserTracker, const nite::Array<nite::UserData
 	previousDepth = pDepth[width*topOfHead+leftOfHead];
 	currentDepth = previousDepth;
 	for (int i = topOfHead; i < bottomOfHead; i++) {
+		previousDepth = pDepth[width*i+leftOfHead];
+		currentDepth = previousDepth;
 		for (int j = leftOfHead; j < rightOfHead; j++) {
-			//if ((abs(currentDepth - previousDepth) > 200 && currentDepth != 0) && headFound) {
-			//	headFound = false;
-			//	std::cout << "HeadLost: " << i << ", " << j << std::endl;
-			//	break;
-			//} else if (headFound) {			
-			//	std::cout << "In Middle of Head" << std::endl;
-			//	SwapPixels(j, i, head2.x - (head1.x-j), head2.y - (head1.y-i));
-			//} else if ((abs(currentDepth - previousDepth) > 200 && currentDepth != 0)) {
-			//	headFound = true; 
-			//	SwapPixels(j, i, head2.x - (head1.x-j), head2.y - (head1.y-i));
-			//	std::cout << "HeadFound: " << i << ", " << j << std::endl;
-			//} 
-			//previousDepth = currentDepth;
-			//while ((currentDepth = pDepth[width*i+j]) == 0 && j < rightOfHead) {
-			//	if (headFound) {
-			//		//SwapPixels(j, i, head2.x - (head1.x-j), head2.y - (head1.y-i));
-			//		headFound = false;
-			//	}
-			//	j++;
-			//}
-			SwapPixels(j, i, head2.x - (head1.x-j), head2.y - (head1.y-i));
+			switch (headFound) {
+				case true:
+					if (abs(previousDepth-currentDepth) > 200 && currentDepth != 0) {
+						headFound = false;
+						j = rightOfHead;
+						continue;
+					} else {
+						SwapPixels(j, i, head2.x - (head1.x-j), head2.y - (head1.y-i));
+					}
+					break;
+
+				case false:
+					if (abs(previousDepth-currentDepth) > 200 && currentDepth != 0) {
+						headFound = true;
+						SwapPixels(j, i, head2.x - (head1.x-j), head2.y - (head1.y-i));
+					}
+					break;
+			}
+			previousDepth = currentDepth;
+			currentDepth = pDepth[width*i+j];
 		}
-		//headFound = false;
 	}
 
 }
@@ -152,18 +154,14 @@ void DrawLimb(nite::UserTracker* pUserTracker, const nite::SkeletonJoint& joint1
 	pUserTracker->convertJointCoordinatesToDepth(joint1.getPosition().x, joint1.getPosition().y, joint1.getPosition().z, &coordinates[0], &coordinates[1]);
 	pUserTracker->convertJointCoordinatesToDepth(joint2.getPosition().x, joint2.getPosition().y, joint2.getPosition().z, &coordinates[3], &coordinates[4]);
 
-	if (joint1.getPositionConfidence() == 1 && joint2.getPositionConfidence() == 1)
+	if (joint1.getPositionConfidence() >= .5f && joint2.getPositionConfidence() >= .5f)
 	{
-		cv::line(frame, cv::Point((int)coordinates[0], (int)coordinates[1]), cv::Point((int)coordinates[3], (int)coordinates[4]), cv::Scalar(255, 255, 255));
-	}
-	else if (joint1.getPositionConfidence() < 0.5f || joint2.getPositionConfidence() < 0.5f)
-	{
-		return;
+		cv::line(drawFrame, cv::Point((int)coordinates[0], (int)coordinates[1]), cv::Point((int)coordinates[3], (int)coordinates[4]), cv::Scalar(0, 0, 0), 5);
 	}
 }
 void DrawSkeleton(nite::UserTracker* pUserTracker, const nite::UserData& userData)
 {
-	DrawLimb(pUserTracker, userData.getSkeleton().getJoint(nite::JOINT_HEAD), userData.getSkeleton().getJoint(nite::JOINT_NECK), 1);
+	//DrawLimb(pUserTracker, userData.getSkeleton().getJoint(nite::JOINT_HEAD), userData.getSkeleton().getJoint(nite::JOINT_NECK), 1);
 
 	DrawLimb(pUserTracker, userData.getSkeleton().getJoint(nite::JOINT_LEFT_SHOULDER), userData.getSkeleton().getJoint(nite::JOINT_LEFT_ELBOW), 1);
 	DrawLimb(pUserTracker, userData.getSkeleton().getJoint(nite::JOINT_LEFT_ELBOW), userData.getSkeleton().getJoint(nite::JOINT_LEFT_HAND), 1);
@@ -285,6 +283,7 @@ int main(int argc, char* argv[])
 
 	cv::namedWindow("OpenCV", 1);
 	frame = cv::Mat(cv::Size(width,height), CV_8UC3);
+	drawFrame = cv::Mat(cv::Size(width,height), CV_8UC3);
 
 	cv::Mat finish = cv::Mat(cv::Size(width,height), CV_8UC3);
 	int totalLeftDepth = 0;
@@ -304,6 +303,7 @@ int main(int argc, char* argv[])
     int runningCount = 0;
     int objectCount = 0;
     bool foundObject = false;
+	image = cvLoadImage("island.bmp", CV_LOAD_IMAGE_COLOR);   // Read the file
 
 	while(1)
 	{		
@@ -316,6 +316,8 @@ int main(int argc, char* argv[])
                 for ( int j = 0; j < frame.cols; j++) {
                     openni::RGB888Pixel pix = pColor[frame.cols*i+j];
                     frame.at<cv::Vec3b>(i, j) = cv::Vec3b(pix.b, pix.g, pix.r);
+                    //drawFrame.at<cv::Vec3b>(i, j) = cv::Vec3b(255, 255, 255);
+					drawFrame.at<cv::Vec3b>(i, j) = image.at<cv::Vec3b>(i, j);
                 }
             }
 
@@ -332,10 +334,10 @@ int main(int argc, char* argv[])
 				{
 					if (users[i].getSkeleton().getState() == nite::SKELETON_TRACKED)
 					{
-						DrawSkeleton(m_pUserTracker, user);
-						if (i == 0) {
+						if (i == 1) {
 							SwapHeads(m_pUserTracker, users);
 						}
+						DrawSkeleton(m_pUserTracker, user);
 					}
 				}
 
@@ -354,8 +356,9 @@ int main(int argc, char* argv[])
 
 
 
-		cv::imshow("depth", frame);
+		cv::imshow("orig", frame);
 		c = cv::waitKey(10);
+		cv::imshow("final", drawFrame);
 		if(c==27)
 			break;
 	}
