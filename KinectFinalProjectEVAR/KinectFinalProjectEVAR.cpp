@@ -281,7 +281,7 @@ int main(int argc, char* argv[])
 		return nite::STATUS_ERROR;
 	}
 
-	cv::namedWindow("OpenCV", 1);
+	cv::namedWindow("orig", 1);
 	frame = cv::Mat(cv::Size(width,height), CV_8UC3);
 	drawFrame = cv::Mat(cv::Size(width,height), CV_8UC3);
 
@@ -316,7 +316,6 @@ int main(int argc, char* argv[])
                 for ( int j = 0; j < frame.cols; j++) {
                     openni::RGB888Pixel pix = pColor[frame.cols*i+j];
                     frame.at<cv::Vec3b>(i, j) = cv::Vec3b(pix.b, pix.g, pix.r);
-                    //drawFrame.at<cv::Vec3b>(i, j) = cv::Vec3b(255, 255, 255);
 					drawFrame.at<cv::Vec3b>(i, j) = image.at<cv::Vec3b>(i, j);
                 }
             }
@@ -335,14 +334,15 @@ int main(int argc, char* argv[])
 					if (users[i].getSkeleton().getState() == nite::SKELETON_TRACKED)
 					{
 						if (i == 1) {
-							SwapHeads(m_pUserTracker, users);
 						}
 						DrawSkeleton(m_pUserTracker, user);
 					}
 				}
 
 			}
-	
+			if (users.getSize() > 1) {
+				SwapHeads(m_pUserTracker, users);
+			}
             
 		c = cv::waitKey(10);
 		if (c == 112) {
